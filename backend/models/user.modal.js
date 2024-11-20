@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema(
     },
     name: {
       type: String,
-      require: true,
+      required: true,
     },
     lastLogin: {
       type: Date,
@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema(
     },
     isVerified: {
       type: Boolean,
-      dafault: false,
+      default: false,
     },
     resetpasswordToken: String,
     resetpasswordTokenExpiresAt: Date,

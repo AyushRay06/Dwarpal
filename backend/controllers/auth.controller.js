@@ -1,13 +1,13 @@
 import bcryptjs from "bcryptjs"
 import { User } from "../models/user.modal.js"
-import { geenrateTokenAndSetCookie } from "../utils/generateJWTandSetCookie.js"
+import { genrateTokenAndSetCookie } from "../utils/generateJWTandSetCookie.js"
 
 export const signup = async (req, res) => {
   const { email, password, name } = req.body
-  
+
   try {
     if (!email || !password || !name) {
-      throw new error("All feilds are required")
+      throw new Error("All feilds are required")
     }
 
     const userAlreadyExists = await User.findOne({ email })
@@ -22,17 +22,19 @@ export const signup = async (req, res) => {
     const verificationToken = Math.floor(
       100000 + Math.random() * 900000
     ).toString()
-    const user = new user({
+
+    //adding thhe new user tyo the DB
+    const user = new User({
       email,
       password: hashedpassword,
       name,
       verificationToken,
       verificationTokenExpiresAt: Date.now() + 10 * 60 * 60 * 1000, //24 Hours
     })
-
+    console.log(user)
     await user.save()
     //JWT
-    geenrateTokenAndSetCookie(res, user._id)
+    genrateTokenAndSetCookie(res, user._id)
 
     res.status(201).json({
       success: true,
@@ -43,12 +45,8 @@ export const signup = async (req, res) => {
       },
     })
   } catch (error) {
-    return res
-      .status(400)
-      .json({ success: false, message: "user already exists" })
+    return res.status(400).json({ success: false, message: error.message })
   }
-
-  res.send("Signup")
 }
 export const login = async (req, res) => {
   res.send("Login")
